@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Use MicroTest System</title>
+
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+          media="screen"
+          rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <LINK media="screen" rel="stylesheet" th:href="@{/css/signin.css}">
+    <script src="/webjars/jquery/jquery.min.js"
+            th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+</head>
+<body>
+
+<div class="signin">
+    <div th:class="signin-head">
+        <img th:src="@{/images/test/head_2020.png}" alt="" th:class="img-circle"></div>
+    <br>
+    <CENTER><H1 th:class="title">异常管理系统</H1></CENTER>
+    <form th:class="form-signin" th:action="@{/login}" role="form" method="POST">
+
+        <input type="text" th:class="form-control" placeholder="用户名" th:name="username"  required
+               autofocus/>
+        <input type="password" th:class="form-control" th:name="password"  placeholder="密码" required/>
+        <button class="btn btn-lg btn-warning btn-block" type="submit">登录</button>
+        <center>
+            <a style="color: #ff0000" th:text="${msg}"></a>
+        </center>
+    </form>
+</div>
+</div>
+
+<div th:class="bottom">
+    <div>
+        <a th:class="explain">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            深圳市微特自动化设备有限公司
+        </a>
+        <BR>
+        <a th:class="explain">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
+            Microtest Automation Equipment Co.,Ltd.
+        </a>
+        <BR>
+        <a th:class="explain">地址：深圳市光明新区公明街道上村莲塘工业城C区21栋
+        </a>
+        <BR>
+        <a th:class="explain">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            © 2003-现在 MicroTest 版权所有</a>
+    </div>
+</div>
+</body>
+</html>

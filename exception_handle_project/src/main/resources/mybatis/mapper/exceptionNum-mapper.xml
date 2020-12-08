@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--查询异常信息的条数-->
+<mapper namespace="com.microtest.exception_handle_project.mapper.ExceptionListNumberMapper">
+    <select id="exceptionListNumber" resultType="java.lang.Integer">
+    select count(*) from exceptioninfolist
+    <where>
+        <if test="type==''">
+           and projectNumber like CONCAT('%',#{type},'%')
+        </if>
+    </where>
+  </select>
+</mapper>

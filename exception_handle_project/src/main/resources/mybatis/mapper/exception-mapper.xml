@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.microtest.exception_handle_project.mapper.ExceptionInfoListMapper">
+    <select id="selectExceptionHandleList"
+            resultType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+    select * from ExceptionInfoList
+  </select>
+    <select id="conditionSelect" resultType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+    select * from ExceptionInfoList where ${type} like CONCAT('%',#{info},'%')
+  </select>
+    <select id="specialConditionSelect" resultType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+    SELECT * FROM exceptioninfolist  where  ${type} = (SELECT id FROM ${tableName} where ${type} = #{info})
+    </select>
+    <select id="selectAll" resultType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+    SELECT * FROM exceptioninfolist where
+customer like CONCAT('%',#{info},'%')
+OR date like CONCAT('%',#{info},'%')
+OR projectnumber like CONCAT('%',#{info},'%')
+OR projectName like CONCAT('%',#{info},'%')
+OR stage like CONCAT('%',#{info},'%')
+OR charge like CONCAT('%',#{info},'%')
+OR exception like CONCAT('%',#{info},'%')
+OR reason like CONCAT('%',#{info},'%')
+OR solve like CONCAT('%',#{info},'%')
+OR DRI like CONCAT('%',#{info},'%')
+OR remarks like CONCAT('%',#{info},'%')
+  </select>
+    <insert id="addException" parameterType="com.microtest.exception_handle_project.entity.ExceptionHandleList"
+            useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO exceptioninfolist
+    (date, customer, projectnumber, projectName, stage, number, charge, exceptionrank, exceptionclassify, exception, reason, solve, dri, state, remarks,realPath)
+     VALUES (
+     #{date},
+     #{customer},
+     #{projectNumber},
+     #{projectName},
+     #{stage},
+     #{number},
+     #{charge},
+     #{exceptionRank},
+     #{exceptionClassify},
+     #{exception},
+     #{reason},
+     #{solve},
+     #{DRI},
+     #{state},
+     #{remarks},
+     #{realPath})
+  </insert>
+    <delete id="deleteException">
+        DELETE FROM exceptioninfolist WHERE (id = #{id});
+    </delete>
+    <select id="conditionSelectNum" resultType="java.lang.Integer">
+       select COUNT(*) from ExceptionInfoList where ${type} like CONCAT('%',#{info},'%')
+    </select>
+    <select id="selectAllNum" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM exceptioninfolist where
+customer like CONCAT('%',#{info},'%')
+OR date like CONCAT('%',#{info},'%')
+OR projectnumber like CONCAT('%',#{info},'%')
+OR projectName like CONCAT('%',#{info},'%')
+OR stage like CONCAT('%',#{info},'%')
+OR charge like CONCAT('%',#{info},'%')
+OR exception like CONCAT('%',#{info},'%')
+OR reason like CONCAT('%',#{info},'%')
+OR solve like CONCAT('%',#{info},'%')
+OR DRI like CONCAT('%',#{info},'%')
+OR remarks like CONCAT('%',#{info},'%')
+  </select>
+    <select id="selectIct" resultType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+       select * from ExceptionInfoList where projectNumber like CONCAT('%',#{type},'%')
+    </select>
+
+    <select id="selectAutomation" resultType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+       select * from ExceptionInfoList where projectNumber like CONCAT('%',#{type},'%')
+    </select>
+
+    <select id="selectFct" resultType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+       select * from ExceptionInfoList where projectNumber like CONCAT('%',#{type},'%')
+    </select>
+
+    <select id="getId" resultType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+       select * from ExceptionInfoList where id = #{id}
+    </select>
+    <update id="Modify" parameterType="com.microtest.exception_handle_project.entity.ExceptionHandleList">
+    update exceptioninfolist set
+    date=#{date},
+    customer=#{customer},
+    projectnumber=#{projectNumber},
+    projectName=#{projectName},
+    stage=#{stage},
+    number=#{number},
+    charge=#{charge},
+    exceptionrank=#{exceptionRank},
+     exceptionclassify=#{exceptionClassify},
+    exception=#{exception},
+     reason=#{reason},
+     solve=#{solve},
+     dri=#{DRI},
+     state=#{state},
+     remarks=#{remarks}
+     <if test="realPath!=null">
+         ,realPath=#{realPath}
+     </if>
+     where id = #{id}
+    </update>
+    <select id="selectRealPath" resultType="java.lang.String">
+        select RealPath from exceptioninfolist where id = #{id}
+    </select>
+    <update id="changeState" >
+    update exceptioninfolist set ${type}=#{state} where id = #{id}
+    </update>
+    <insert id="excelExport" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exceptioninfolist
+        (date, customer, projectnumber, projectName, stage, number, charge, exceptionrank, exceptionclassify, exception, reason, solve, dri, state, remarks)
+        VALUES
+        <foreach collection="list" item="ExceptionHandleList" separator=",">
+            (#{ExceptionHandleList.date},
+            #{ExceptionHandleList.customer},
+            #{ExceptionHandleList.projectNumber},
+            #{ExceptionHandleList.projectName},
+            #{ExceptionHandleList.stage},
+            #{ExceptionHandleList.number},
+            #{ExceptionHandleList.charge},
+            #{ExceptionHandleList.exceptionRank},
+            #{ExceptionHandleList.exceptionClassify},
+            #{ExceptionHandleList.exception},
+            #{ExceptionHandleList.reason},
+            #{ExceptionHandleList.solve},
+            #{ExceptionHandleList.DRI},
+            #{ExceptionHandleList.state},
+            #{ExceptionHandleList.remarks})
+        </foreach>
+    </insert>
+    <select id="selectExceptionInfo" parameterType="String" resultType="java.lang.String">
+        select exception from exceptioninfolist
+    </select>
+</mapper>

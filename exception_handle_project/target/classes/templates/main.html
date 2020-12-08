@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>main</title>
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+          media="screen"
+          rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link media="screen" rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+<div>
+    <nav class="navbar navbar-light bg-dark" style="height: 120px">
+        <A class="nav-link" style="color: cadetblue">欢迎使用,[[${session.loginUser}]]</A>
+        <A class="nav-link" th:href="@{/main1}">返回首页</A>
+        <br>
+        <form class="form-inline" th:if="${isAll==true}" th:action="@{/search}">
+            <select th:id="selectList" class="form-control" th:name="selectType" style="width: 30%">
+                <option th:each="selectCondition:${selectConditionList}" th:value="${selectCondition.toString()}"
+                        th:text="${selectCondition.toString()}"></option>
+            </select>
+            <input id="infoInput" class="form-control mr-sm-2" type="search" placeholder="Search" th:name="info"
+                   aria-label="Search" style="width: 30%">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
+        </form>
+        <a class="btn btn-success btn-sm" th:href="@{/addException}">异常添加</a>
+
+
+        <form th:action="@{/export}" method="post" enctype="multipart/form-data">
+            <input id="ExceptionFile" onchange="changeFile(this)" type="file" class="form-control mr-sm-2" name="excel" accept="application/vnd.sealed.xls" style="width: 150px">
+            <input id="importExcel" type="submit" disabled="disabled" value="导入Excel"  class="btn btn-outline-success my-2 my-sm-0">
+            </input>
+        </form>
+
+
+        <button onclick="exportExcel('tableExcel')" id="exportExcel" class="btn btn-outline-success my-2 my-sm-0">
+            导出EXCEL表格
+        </button>
+        <A class="nav-link" id="exit"  th:href="@{/exit}">退出登录</A>
+    </nav>
+    <!--    <nav class="navbar navbar-light bg-light">-->
+    <!--      -->
+    <!--    </nav>-->
+    <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist" style="height: 15px">
+        <li class="nav-item" role="presentation">
+            <a th:class="${type=='automation'?'nav-link active':'nav-link'}" id="pills-home-tab" data-toggle="pill"
+               th:href="@{/main/automation/}" role="tab"
+               aria-controls="pills-all" aria-selected="true">自动化</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a th:class="${type=='fct'?'nav-link active':'nav-link'}" id="pills-profile-tab" data-toggle="pill"
+               th:href="@{/main/fct}" role="tab"
+               aria-controls="pills-profile" aria-selected="false">FCT</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a th:class="${type=='ict'?'nav-link active':'nav-link'}" id="pills-contact-tab" data-toggle="pill"
+               th:href="@{/main/ict}" role="tab"
+               aria-controls="pills-contact" aria-selected="false">ICT</a>
+        </li>
+    </ul>
+    <br>
+</div>
+<div th:if="${ExceptionHandleListNum!=null}">
+    <a style="color: red">一共添加了[[${ExceptionHandleListNum}]]条数据,如果有图片数据请添加</a>
+    <br>
+</div>
+<div th:if="${searchNum!=null}">
+    <a style="color: red">一共查询到[[${searchNum}]]条数据</a>
+    <br>
+</div>
+<div>
+</div>
+<div style="width: 3500px;overflow: scroll">
+    <table id="tableExcel" class="table table-bordered">
+        <thead>
+        <tr class="table-active">
+            <th class="active" style="text-align: center" th:each="ExceptionInfo:${ExceptionInfoList}"
+                th:text="${ExceptionInfo.toString()}"></th>
+        </tr>
+        </thead>
+        <TBODY th:each="exception:${ExceptionHandleList}">
+        <!-- On cells (`td` or `th`) -->
+        <tr th:id="${exception.id}" th:class="${exception.state==1?'table-danger':(exception.state==2?'table-warning':'table-success')}" >
+            <td class="info" th:text="${exception.date}" style="text-align: center"></td>
+            <td class="info" th:text="${exception.customer}" style="text-align: center"></td>
+            <td class="info" th:text="${exception.projectNumber}" style="text-align: center"></td>
+            <td class="info" th:text="${exception.projectName}" style="text-align: center"></td>
+            <td class="info" th:text="${exception.stage}" style="text-align: center"></td>
+            <td class="info" th:text="${exception.number}" style="text-align: center"></td>
+            <td class="info" th:text="${exception.charge}" style="text-align: center"></td>
+            <!--            <td class="info" th:text="${exception.exceptionRank}" style="text-align: center">
+            </td>-->
+            <td class="info" style="width: 150px">
+                <select th:onchange="|javascript: Submit(this,'${exception.id}')|" class="form-control" style="width: 100%;height: 100%">
+                    <OPTION th:selected="${exception.exceptionRank==1}" value="1,exceptionRank">品质问题</OPTION>
+                    <OPTION th:selected="${exception.exceptionRank==2}" value="2,exceptionRank">生产问题</OPTION>
+                    <OPTION th:selected="${exception.exceptionRank==3}" value="3,exceptionRank">工程问题</OPTION>
+                </select>
+            </td>
+            <td class="info" style="width: 150px">
+                <select th:onchange="|javascript: Submit(this,'${exception.id}')|" class="form-control" style="width: 100%;height: 100%">
+                    <OPTION th:selected="${exception.exceptionClassify==1}" value="1,exceptionClassify">一般问题</OPTION>
+                    <OPTION th:selected="${exception.exceptionClassify==2}" value="2,exceptionClassify">一般异常</OPTION>
+                    <OPTION th:selected="${exception.exceptionClassify==3}" value="3,exceptionClassify">重大异常</OPTION>
+                </select>
+            </td>
+            <td class="info" th:text="${exception.exception}" style="text-align: center;font-min-size: 10px"></td>
+            <td class="info" th:text="${exception.reason}" style="text-align: center"></td>
+            <td class="info" th:text="${exception.solve}" style="text-align: center"></td>
+            <td class="info" th:text="${exception.DRI}" style="text-align: center"></td>
+            <td class="info" style="text-align: center;width: 150px">
+                <select th:onchange="|javascript: Submit(this,'${exception.id}')|" class="form-control" style="width: 100%;height: 100%">
+                    <OPTION th:selected="${exception.state==1}" value="1,state">open</OPTION>
+                    <OPTION th:selected="${exception.state==2}" value="2,state">on-going</OPTION>
+                    <OPTION th:selected="${exception.state==3}" value="3,state">close</OPTION>
+                </select>
+            </td>
+            <td class="info" th:text="${exception.remarks}" style="text-align: center"></td>
+            <td class="info" style="text-align: center">
+                <a target="_blank" th:if="${exception.realPath!=null}" th:href="@{/imageShow}+${exception.id}">
+                    <img   th:src="@{/main/image}+${exception.id}" style="width: 50%;height: 50%">
+                </a>
+
+            </td>
+            <td class="info" style="text-align: center">
+                <A value="修改" TYPE="button" th:href="@{/modify}+${exception.id}" class="btn btn-success">修改</A>
+                <A value="删除" TYPE="button" th:href="@{/deleteException}+${exception.id}" class="btn btn-danger">删除</A>
+            </td>
+        </tr>
+        </TBODY>
+    </table>
+</div>
+<BR>
+<BR>
+
+<div th:if="${pageNum!=null}">
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" th:href="@{main}+1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="num:${#numbers.sequence(1,pageNum)}">
+                <a class="page-link" th:text="${num}" th:href="@{main}+${num}"></a></li>
+            <li class="page-item">
+                <a class="page-link" th:href="@{main}+${pageNum}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="pagination">&nbsp;
+        </ul>
+    </nav>
+</div>
+<script src="/webjars/jquery/jquery.min.js"
+        th:src="@{/webjars/jquery/3.3.1/jquery.min.js}">
+</script>
+<script>
+    let info;
+    let trClass;
+    function Submit(obj,id) {
+        info = $(obj).val();
+        $.ajax({
+            url: "/changeState",
+            type: "POST",
+            async:true,
+            dataType : "json",
+            data : {"info":info,"id":id},
+            success: function (data) {
+                if(data){
+                    if(info.indexOf("state") >= 0){
+                        if(info.indexOf("1") >= 0){
+                            trClass=$("#"+id)
+                            trClass.removeClass()
+                            trClass.attr("class","table-danger")
+                        }
+                        if(info.indexOf("2") >= 0){
+                            trClass=$("#"+id)
+                            trClass.removeClass()
+                            trClass.attr("class","table-warning")
+                        }
+                        if(info.indexOf("3") >= 0){
+                            trClass=$("#"+id)
+                            trClass.removeClass()
+                            trClass.attr("class","table-success")
+                        }
+
+                    }
+
+
+                }
+            }
+            ,   error : function() {
+                alert('请求有误');
+            }
+        })
+
+    }
+</script>
+<script language="JavaScript" type="text/javascript">
+    $(".btn-danger").click(function () {
+        const flag = confirm("确实删除吗？");
+        return flag
+    })
+    $("#exit").click(function () {
+        const flag = confirm("确实退出吗？");
+        return flag
+    })
+    var idTmr;
+    //获取当前浏览器类型
+    function getExplorer() {
+        var explorer = window.navigator.userAgent;
+        //ie
+        if (explorer.indexOf("MSIE") >= 0) {
+            return 'ie';
+        }
+        //firefox
+        else if (explorer.indexOf("Firefox") >= 0) {
+            return 'Firefox';
+        }
+        //Chrome
+        else if (explorer.indexOf("Chrome") >= 0) {
+            return 'Chrome';
+        }
+        //Opera
+        else if (explorer.indexOf("Opera") >= 0) {
+            return 'Opera';
+        }
+        //Safari
+        else if (explorer.indexOf("Safari") >= 0) {
+            return 'Safari';
+        }
+    }
+
+    //获取到类型需要判断当前浏览器需要调用的方法，目前项目中火狐，谷歌，360没有问题
+    //win10自带的IE无法导出
+    function exportExcel(tableid) {
+        if (getExplorer() == 'ie') {
+            var curTbl = document.getElementById(tableid);
+            var oXL = new ActiveXObject("Excel.Application");
+            var oWB = oXL.Workbooks.Add();
+            var xlsheet = oWB.Worksheets(1);
+            var sel = document.body.createTextRange();
+            sel.moveToElementText(curTbl);
+            sel.select();
+            sel.execCommand("Copy");
+            xlsheet.Paste();
+            oXL.Visible = true;
+            try {
+                var fname = oXL.Application.GetSaveAsFilename("Excel.xls", "Excel Spreadsheets (*.xls), *.xls");
+            } catch (e) {
+                print("Nested catch caught " + e);
+            } finally {
+                oWB.SaveAs(fname);
+                oWB.Close(savechanges = false);
+                oXL.Quit();
+                oXL = null;
+                idTmr = window.setInterval("Cleanup();", 1);
+            }
+        } else {
+            tableToExcel(tableid)
+        }
+    }
+
+    function Cleanup() {
+        window.clearInterval(idTmr);
+        CollectGarbage();
+    }
+
+    //判断浏览器后调用的方法，把table的id传入即可
+    var tableToExcel = (function () {
+        var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html><head><meta charset="UTF-8"></head><body><table>{table}</table></body></html>',
+            base64 = function (s) {
+                return window.btoa(unescape(encodeURIComponent(s)))
+            },
+            format = function (s, c) {
+                return s.replace(/{(\w+)}/g,
+                    function (m, p) {
+                        return c[p];
+                    })
+            }
+        return function (table, name) {
+            if (!table.nodeType) table = document.getElementById(table)
+            var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+            window.location.href = uri + base64(format(template, ctx))
+        }
+    })()
+</script>
+<SCRIPT>
+
+   function changeFile(obj){
+        if (obj.value){
+            $("#exportExcel").removeAttr("disabled")
+        }
+    }
+
+</SCRIPT>
+</body>
+</html>
